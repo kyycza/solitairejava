@@ -28,7 +28,7 @@ public class SolitaireApp {
                 play(settings);
                 MenuChoice choice = input.askChoice("What next?", List.of(MenuChoice.values()));
                 if (choice == MenuChoice.QUIT) {
-                    MessagePrinter.printInfo("Thanks for watching. Goodbye!");
+                    MessagePrinter.printInfo("Thanks for playing. Goodbye!");
                     return EXIT_OK;
                 }
                 if (choice == MenuChoice.PLAY_AGAIN_NEW_OPTIONS) {
