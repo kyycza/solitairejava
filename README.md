@@ -6,9 +6,12 @@ The computer plays Klondike Solitaire by itself in the console.
     mvn package
     java -jar target/solitaire-1.0.jar
 
-Needs JDK 25 and Maven. Use a UTF-8 terminal (IntelliJ, VS Code, Windows Terminal) so the suit symbols show.
+Needs JDK 25 and Maven. Cards are shown the same way as in deck files: suit letter, a dash, then the rank, for example `S-A` (Ace of Spades) or `H-10` (Ten of Hearts).
 
 ## Options
-Draw 1 / Draw 3 · Random, out-faro or in-faro shuffle · any deck file (cards like `D-A`, `S-10`; Enter = standard deck) · watch one game or test the win rate.
+- Draw 1 or Draw 3
+- Random, out-faro or in-faro shuffle (1 to 52 faro shuffles)
+- Any deck file, with cards like `D-A` or `S-10` separated by commas, spaces or new lines (press Enter for the standard deck)
+- Watch one game move by move, or test the win rate over many games
 
 Sample decks are in `src/main/resources/decks`.

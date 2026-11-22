@@ -25,7 +25,7 @@ public final class DeckPrinter {
         List<Card> cards = deck.getCards();
         StringBuilder row = new StringBuilder();
         for (int i = 0; i < cards.size(); i++) {
-            row.append(String.format("%-5s", cards.get(i).toCode()));
+            row.append(cards.get(i).toCode()).append("  ");
             if ((i + 1) % CARDS_PER_ROW == 0) {
                 System.out.println(row);
                 row.setLength(0);

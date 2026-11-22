@@ -9,7 +9,7 @@ public final class Foundation extends Pile {
     private final Suit suit;
 
     Foundation(Suit suit) {
-        super(suit.getSymbol() + " Foundation");
+        super(suit.getLetter() + " Foundation");
         this.suit = suit;
     }
 

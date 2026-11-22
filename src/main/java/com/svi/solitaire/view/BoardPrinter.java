@@ -8,7 +8,7 @@ import java.util.List;
 public final class BoardPrinter {
 
     private static final int STOCK_COLUMN_WIDTH = 13;
-    private static final int WASTE_COLUMN_WIDTH = 18;
+    private static final int WASTE_COLUMN_WIDTH = 20;
     private static final String GAP = " ";
 
     private BoardPrinter() {
@@ -17,7 +17,7 @@ public final class BoardPrinter {
     /**
      * Prints the table after a move.
      *
-     * @param tableau       the table
+     * @param tableau     the table
      * @param step        the number of the move that was just played (0 = game start)
      * @param description what the move did
      * @param highlighted the cards that just moved; they are shown in blue
@@ -37,7 +37,7 @@ public final class BoardPrinter {
                 + foundationsText(tableau, highlighted));
     }
 
-    /** For example "[###] x24", padded to the width of the STOCK column. */
+    /** For example "[####] x24", padded to the width of the STOCK column. */
     private static String stockText(Talon talon) {
         int cards = talon.getStock().size();
         String box = cards == 0 ? CardText.empty() : CardText.faceDown();
@@ -73,7 +73,7 @@ public final class BoardPrinter {
     private static void printStacks(Tableau tableau, List<Card> highlighted) {
         StringBuilder header = new StringBuilder();
         for (int number = 1; number <= Tableau.STACK_COUNT; number++) {
-            header.append(String.format("  %d  ", number)).append(GAP);
+            header.append(String.format("  %-" + (CardText.BOX_WIDTH - 2) + "d", number)).append(GAP);
         }
         int tallest = 1;
         for (Manoeuvre stack : tableau.getStacks()) {

@@ -9,6 +9,7 @@ import com.svi.solitaire.io.InputHandler;
 import com.svi.solitaire.io.FileLoader;
 import com.svi.solitaire.model.Deck;
 import com.svi.solitaire.shuffle.FaroShuffler;
+import com.svi.solitaire.shuffle.RandomShuffler;
 import com.svi.solitaire.shuffle.Shuffler;
 import com.svi.solitaire.view.MessagePrinter;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class SettingsMenu {
 
     private static final int MIN_TEST_GAMES = 1;
-    private static final int MAX_TEST_GAMES = 100_000;
+    private static final int MAX_TEST_GAMES = 100;
 
     private final InputHandler input;
 
@@ -35,7 +36,7 @@ public class SettingsMenu {
         Shuffler shuffler = askShuffler();
         Deck startingDeck = askStartingDeck();
         PlayMode playMode = input.askChoice("What do you want to do?", List.of(PlayMode.values()));
-        int gameCount = playMode == PlayMode.TEST_WIN_RATE ? askGameCount(shuffler) : 1;
+        int gameCount = playMode == PlayMode.TEST_WIN_RATE ? askGameCount(drawMode, shuffler) : 1;
         return new GameSettings(drawMode, shuffler, startingDeck, playMode, gameCount);
     }
 
@@ -73,9 +74,13 @@ public class SettingsMenu {
         }
     }
 
-    private int askGameCount(Shuffler shuffler) {
-        if (shuffler instanceof FaroShuffler) {
-            MessagePrinter.printInfo("Note: a faro shuffle always gives the same deck, so every game will be the same.");
+    private int askGameCount(DrawMode drawMode, Shuffler shuffler) {
+        if (drawMode == DrawMode.DRAW_THREE) {
+            MessagePrinter.printInfo("Note: Draw 3 games take longer than Draw 1, because the player thinks harder."
+                    + " 100 games can take about a minute.");
+        }
+        if (!(shuffler instanceof RandomShuffler)) {
+            MessagePrinter.printInfo("Note: only the random shuffle changes the deck, so with this shuffle every game will be the same.");
         }
         return input.askNumber("How many games", MIN_TEST_GAMES, MAX_TEST_GAMES);
     }

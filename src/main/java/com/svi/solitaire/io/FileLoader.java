@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -59,11 +58,11 @@ public final class FileLoader {
     private static BufferedReader openDeckFile(String fileName) throws IOException {
         Path path = Path.of(fileName);
         if (Files.isRegularFile(path)) {
-            return Files.newBufferedReader(path, StandardCharsets.UTF_8);
+            return Files.newBufferedReader(path);
         }
         InputStream bundledDeck = FileLoader.class.getResourceAsStream(BUNDLED_DECKS_FOLDER + fileName);
         if (bundledDeck != null) {
-            return new BufferedReader(new InputStreamReader(bundledDeck, StandardCharsets.UTF_8));
+            return new BufferedReader(new InputStreamReader(bundledDeck));
         }
         throw new NoSuchFileException(fileName);
     }

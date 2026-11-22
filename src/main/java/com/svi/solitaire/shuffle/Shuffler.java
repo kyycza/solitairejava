@@ -29,6 +29,7 @@ public interface Shuffler {
             case RANDOM -> new RandomShuffler();
             case OUT_FARO -> new OutFaroShuffler(times);
             case IN_FARO -> new InFaroShuffler(times);
+            case NONE -> new NoShuffler();
         };
     }
 }

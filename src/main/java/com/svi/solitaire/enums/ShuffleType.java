@@ -4,7 +4,8 @@ package com.svi.solitaire.enums;
 public enum ShuffleType {
     RANDOM("Random"),
     OUT_FARO("Out-faro (perfect shuffle, top half first)"),
-    IN_FARO("In-faro (perfect shuffle, bottom half first)");
+    IN_FARO("In-faro (perfect shuffle, bottom half first)"),
+    NONE("No shuffle (keep the deck in its order)");
 
     private final String description;
 
@@ -12,9 +13,8 @@ public enum ShuffleType {
         this.description = description;
     }
 
-    /** True for the two perfect shuffles, which need a number of times to shuffle. */
     public boolean isFaro() {
-        return this != RANDOM;
+        return this == OUT_FARO || this == IN_FARO;
     }
 
     @Override
