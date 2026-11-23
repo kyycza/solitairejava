@@ -23,7 +23,7 @@ public class BoardEvaluator {
     public int score(Tableau tableau) {
         return tableau.countFoundationCards() * POINTS_PER_FOUNDATION_CARD
                 - tableau.countHiddenCards() * PENALTY_PER_HIDDEN_CARD
-                - tallHiddenStacksPenalty(tableau)
+                - deepHiddenStacksPenalty(tableau)
                 + tableau.countEmptyStacks() * POINTS_PER_EMPTY_STACK;
     }
 
@@ -31,7 +31,7 @@ public class BoardEvaluator {
      * Stacks with many face-down cards are the hardest to dig out, so they cost extra:
      * a stack with h face-down cards counts h*(h-1)/2 units (0, 0, 1, 3, 6, 10, 15 ...).
      */
-    private int tallHiddenStacksPenalty(Tableau tableau) {
+    private int deepHiddenStacksPenalty(Tableau tableau) {
         int units = 0;
         for (Manoeuvre stack : tableau.getStacks()) {
             int hidden = stack.getHiddenCount();
