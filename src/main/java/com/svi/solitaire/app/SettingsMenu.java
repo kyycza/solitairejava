@@ -91,7 +91,7 @@ public class SettingsMenu {
     private int askGameCount(Shuffler shuffler) {
         int differentDecks = shuffler.getCycleLength();
         if (differentDecks > 0) {
-            MessagePrinter.printInfo("A perfect shuffle can only make " + differentDecks
+            MessagePrinter.printInfo("This shuffle can only make " + differentDecks
                     + " different decks, so each one is played once.");
             return differentDecks;
         }
