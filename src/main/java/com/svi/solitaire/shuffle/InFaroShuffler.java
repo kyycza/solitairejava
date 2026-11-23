@@ -26,7 +26,7 @@ public class InFaroShuffler extends FaroShuffler {
     }
 
     @Override
-    public OutFaroShuffler withTimes(int times) {
-        return new OutFaroShuffler(times);
+    public InFaroShuffler withTimes(int times) {
+        return new InFaroShuffler(times);
     }
 }
