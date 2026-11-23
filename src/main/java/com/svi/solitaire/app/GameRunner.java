@@ -6,6 +6,7 @@ import com.svi.solitaire.view.BoardPrinter;
 import com.svi.solitaire.view.DeckPrinter;
 import com.svi.solitaire.view.MessagePrinter;
 import com.svi.solitaire.service.AutoPlayer;
+import com.svi.solitaire.shuffle.Shuffler;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +24,6 @@ public final class GameRunner {
     private interface MoveListener {
         void moveWasPlayed(Tableau tableau, int moveNumber, String description, List<Card> highlighted);
     }
-
     /** Used by the win-rate test: nobody listens, nothing is printed. */
     private static final MoveListener NOBODY = (game, moveNumber, description, highlighted) -> { };
 
@@ -50,20 +50,30 @@ public final class GameRunner {
 
     /**
      * Plays many games at the same time without printing them, then prints the win rate.
+     * <p>
+     * With a random shuffle every game gets a new random deck. A perfect (faro) shuffle always makes the same
+     * deck, so instead every game uses a DIFFERENT number of shuffles (1, 2, 3 ... up to the cycle length).
+     * That plays every deck the shuffle can make exactly once.
+     * <p>
      * A game that fails with an unexpected error is counted separately and does not stop the others.
      *
-     * @param settings the user's choices
+     * @param settings the user's choices; for a faro shuffle its game count is the cycle length
      */
     public static void testWinRate(GameSettings settings) {
         AtomicInteger wins = new AtomicInteger();
         AtomicInteger errors = new AtomicInteger();
         long start = System.currentTimeMillis();
+        boolean differentDeckPerGame = settings.shuffler().getCycleLength() > 0;
 
         IntStream.range(0, settings.gameCount()).parallel().forEach(gameNumber -> {
             try {
-                Deck deck = settings.shuffler().shuffle(settings.startingDeck());
+                // faro: game 0 = 1 shuffle, game 1 = 2 shuffles ... so every game is a different deck
+                Shuffler shuffler = differentDeckPerGame
+                        ? settings.shuffler().withTimes(gameNumber + 1)
+                        : settings.shuffler();
+                Deck deck = shuffler.shuffle(settings.startingDeck());
                 Tableau tableau = Tableau.deal(deck, settings.drawMode());
-                playToEnd(tableau, new AutoPlayer(gameNumber), NOBODY);                  // in testWinRate
+                playToEnd(tableau, new AutoPlayer(gameNumber), NOBODY);
                 if (tableau.isWon()) {
                     wins.incrementAndGet();
                 }

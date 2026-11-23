@@ -33,21 +33,28 @@ public class SettingsMenu {
     /** Asks all the questions, one after the other. */
     public GameSettings askSettings() {
         DrawMode drawMode = input.askChoice("Draw mode?", List.of(DrawMode.values()));
-        Shuffler shuffler = askShuffler();
-        Deck startingDeck = askStartingDeck();
         PlayMode playMode = input.askChoice("What do you want to do?", List.of(PlayMode.values()));
-        int gameCount = playMode == PlayMode.TEST_WIN_RATE ? askGameCount(drawMode, shuffler) : 1;
+        Shuffler shuffler = askShuffler(playMode);
+        Deck startingDeck = askStartingDeck();
+        int gameCount = playMode == PlayMode.TEST_WIN_RATE ? askGameCount(shuffler) : 1;
         return new GameSettings(drawMode, shuffler, startingDeck, playMode, gameCount);
     }
 
-    private Shuffler askShuffler() {
+    /**
+     * Asks for the kind of shuffle. The number of faro shuffles is only asked when watching one game:
+     * the win-rate test plays every number of shuffles by itself.
+     *
+     * @param playMode what the user chose to do
+     * @return the chosen shuffler
+     */
+    private Shuffler askShuffler(PlayMode playMode) {
         ShuffleType type = input.askChoice("Shuffle type?", List.of(ShuffleType.values()));
-        int times = type.isFaro()
+        boolean askTimes = type.isFaro() && playMode == PlayMode.WATCH_ONE_GAME;
+        int times = askTimes
                 ? input.askNumber("How many faro shuffles", FaroShuffler.MIN_TIMES, FaroShuffler.MAX_TIMES)
-                : 1;
+                : FaroShuffler.MIN_TIMES;
         return Shuffler.create(type, times);
     }
-
     /**
      * Asks for a deck file until it can be read, or uses the standard deck when the user presses Enter.
      * Each kind of problem has its own message, because each one has a different fix.
@@ -61,26 +68,32 @@ public class SettingsMenu {
             try {
                 return FileLoader.loadDeck(fileName);
             } catch (NoSuchFileException missing) {
-                MessagePrinter.printError("  No file called \"" + fileName + "\" was found.");
+                MessagePrinter.printError("No file called \"" + fileName + "\" was found.");
             } catch (InvalidPathException badName) {
-                MessagePrinter.printError("  \"" + fileName + "\" is not a valid file name.");
+                MessagePrinter.printError("\"" + fileName + "\" is not a valid file name.");
             } catch (InvalidCardException badCard) {
-                MessagePrinter.printError("  The file has a wrong card: " + badCard.getMessage());
+                MessagePrinter.printError("The file has a wrong card: " + badCard.getMessage());
             } catch (InvalidDeckException badDeck) {
-                MessagePrinter.printError("  The file is not a complete deck: " + badDeck.getMessage());
+                MessagePrinter.printError("The file is not a complete deck: " + badDeck.getMessage());
             } catch (IOException unreadable) {
-                MessagePrinter.printError("  The file could not be read: " + unreadable.getMessage());
+                MessagePrinter.printError("The file could not be read: " + unreadable.getMessage());
             }
         }
     }
 
-    private int askGameCount(DrawMode drawMode, Shuffler shuffler) {
-        if (drawMode == DrawMode.DRAW_THREE) {
-            MessagePrinter.printInfo("Note: Draw 3 games take longer than Draw 1, because the player thinks harder."
-                    + " 100 games can take about a minute.");
-        }
-        if (!(shuffler instanceof RandomShuffler)) {
-            MessagePrinter.printInfo("Note: only the random shuffle changes the deck, so with this shuffle every game will be the same.");
+    /**
+     * Asks how many games to test. A faro shuffle is not asked: it can only make a fixed number of
+     * different decks, so every one of them is played once.
+     *
+     * @param shuffler the chosen shuffler
+     * @return the number of games to play
+     */
+    private int askGameCount(Shuffler shuffler) {
+        int differentDecks = shuffler.getCycleLength();
+        if (differentDecks > 0) {
+            MessagePrinter.printInfo("A perfect shuffle can only make " + differentDecks
+                    + " different decks, so each one is played once.");
+            return differentDecks;
         }
         return input.askNumber("How many games", MIN_TEST_GAMES, MAX_TEST_GAMES);
     }

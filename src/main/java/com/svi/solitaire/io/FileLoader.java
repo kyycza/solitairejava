@@ -30,7 +30,7 @@ import java.util.StringTokenizer;
 public final class FileLoader {
 
     /** The folder inside src/main/resources that holds the bundled decks. */
-    private static final String BUNDLED_DECKS_FOLDER = "/decks/";
+    private static final String BUNDLED_DECKS_FOLDER = "/";
     private static final String CARD_SEPARATORS = ", \t";
 
     private FileLoader() {

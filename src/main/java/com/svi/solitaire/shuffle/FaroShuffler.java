@@ -63,4 +63,10 @@ public abstract class FaroShuffler implements Shuffler {
     public String describe() {
         return getName() + " x " + times;
     }
+
+    @Override
+    public abstract int getCycleLength();
+
+    @Override
+    public abstract FaroShuffler withTimes(int times);
 }

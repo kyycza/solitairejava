@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>${main.class}</mainClass>
+                            <mainClass>com.svi.solitaire.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

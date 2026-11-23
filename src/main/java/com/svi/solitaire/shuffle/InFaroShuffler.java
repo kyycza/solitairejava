@@ -16,4 +16,17 @@ public class InFaroShuffler extends FaroShuffler {
     protected String getName() {
         return "In-faro";
     }
+
+    /** An in-faro shuffle returns the deck to its original order after 52 shuffles. */
+    private static final int CYCLE_LENGTH = 52;
+
+    @Override
+    public int getCycleLength() {
+        return CYCLE_LENGTH;
+    }
+
+    @Override
+    public OutFaroShuffler withTimes(int times) {
+        return new OutFaroShuffler(times);
+    }
 }

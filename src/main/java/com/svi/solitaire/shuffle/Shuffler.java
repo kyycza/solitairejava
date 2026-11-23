@@ -32,4 +32,23 @@ public interface Shuffler {
             case NONE -> new NoShuffler();
         };
     }
+    /**
+     * How many shuffles bring a deck back to its original order. A perfect shuffle always gives the same
+     * result, so repeating it 1, 2, 3 ... times makes exactly this many different decks.
+     *
+     * @return the number of different decks this shuffle can make, or 0 if it is random and never repeats
+     */
+    default int getCycleLength() {
+        return 0;
+    }
+
+    /**
+     * The same kind of shuffle, repeated a different number of times.
+     *
+     * @param times how many times to shuffle (a random shuffle ignores this)
+     * @return a shuffler of the same kind
+     */
+    default Shuffler withTimes(int times) {
+        return this;
+    }
 }

@@ -16,4 +16,17 @@ public class OutFaroShuffler extends FaroShuffler {
     protected String getName() {
         return "Out-faro";
     }
+
+    /** An out-faro shuffle returns the deck to its original order after 8 shuffles. */
+    private static final int CYCLE_LENGTH = 8;
+
+    @Override
+    public int getCycleLength() {
+        return CYCLE_LENGTH;
+    }
+
+    @Override
+    public OutFaroShuffler withTimes(int times) {
+        return new OutFaroShuffler(times);
+    }
 }

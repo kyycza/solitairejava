@@ -11,7 +11,7 @@ public final class MessagePrinter {
 
     public static void printBanner() {
         System.out.println(AnsiColor.CYAN.paint("========================================="));
-        System.out.println(AnsiColor.CYAN.paint("      AUTOPLAY  KLONDIKE  SOLITAIRE"));
+        System.out.println(AnsiColor.CYAN.paint("           KLONDIKE  SOLITAIRE"));
         System.out.println(AnsiColor.CYAN.paint("========================================="));
     }
 
