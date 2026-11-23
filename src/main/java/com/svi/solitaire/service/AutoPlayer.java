@@ -30,7 +30,7 @@ import java.util.Set;
  *   <li><b>Look through the talon once.</b> At the start it draws through the whole stock, so it knows
  *       every talon card (any human may do the same).</li>
  *   <li><b>Think ahead.</b> It tries thousands of move sequences on COPIES of the board (breadth-first
- *       search), scores every board it reaches, and plays the plan that leads to the best one.
+ *       search), scores every board it reaches, and plays the plan that leads to the highest-scoring one.
  *       A branch stops when a face-down card is turned, because nobody knows what will appear.</li>
  *   <li><b>Imagine the face-down cards (Draw 3 only).</b> It knows WHICH cards are face down (every card
  *       it cannot see elsewhere), just not where. So it imagines several random arrangements, plans in
@@ -61,7 +61,7 @@ public class AutoPlayer implements Player {
         if (shouldImagineHiddenCards(tableau)) {
             return planByImagining(tableau);
         }
-        return findBestPlan(tableau, false);
+        return findHighestScoringPlan(tableau, false);
     }
 
     private boolean shouldImagineHiddenCards(Tableau tableau) {
@@ -72,17 +72,17 @@ public class AutoPlayer implements Player {
 
     private List<Move> planByImagining(Tableau tableau) {
         Map<String, Integer> votes = new HashMap<>();
-        Map<String, List<Move>> openingByResult = new HashMap<>();
+        Map<String, List<Move>> openingByTableKey = new HashMap<>();
         for (int i = 0; i < IMAGINED_GAMES_PER_DECISION; i++) {
             Tableau imagined = tableau.imagineHiddenCards(random);
-            List<Move> opening = playableOpening(tableau, findBestPlan(imagined, true));
+            List<Move> opening = playableOpening(tableau, findHighestScoringPlan(imagined, true));
             if (!opening.isEmpty()) {
-                String result = resultOf(tableau, opening);
-                votes.merge(result, 1, Integer::sum);
-                openingByResult.putIfAbsent(result, opening);
+                String tableKeyAfterOpening = tableKeyAfter(tableau, opening);
+                votes.merge(tableKeyAfterOpening, 1, Integer::sum);
+                openingByTableKey.putIfAbsent(tableKeyAfterOpening, opening);
             }
         }
-        return openingByResult.getOrDefault(mostVoted(votes), List.of());
+        return openingByTableKey.getOrDefault(findMostVotedTableKey(votes), List.of());
     }
 
     /**
@@ -102,7 +102,7 @@ public class AutoPlayer implements Player {
     }
 
     /** Two openings that reach the same board count as the same choice, even if their order differs. */
-    private String resultOf(Tableau realTableau, List<Move> opening) {
+    private String tableKeyAfter(Tableau realTableau, List<Move> opening) {
         Tableau trial = realTableau.copy();
         for (Move move : opening) {
             trial.apply(move);
@@ -110,26 +110,27 @@ public class AutoPlayer implements Player {
         return trial.toKey();
     }
 
-    private String mostVoted(Map<String, Integer> votes) {
-        String winner = null;
+    private String findMostVotedTableKey(Map<String, Integer> votes) {
+        String mostVotedKey = null;
         for (Map.Entry<String, Integer> entry : votes.entrySet()) {
-            if (winner == null || entry.getValue() > votes.get(winner)) {
-                winner = entry.getKey();
+            if (mostVotedKey == null || entry.getValue() > votes.get(mostVotedKey)) {
+                mostVotedKey = entry.getKey();
             }
         }
-        return winner;
+        return mostVotedKey;
     }
 
     // ----- idea 2: think ahead -----
 
     /**
-     * Finds the best plan, first with careful moves only, then (as a last chance) with every legal move.
+     * Finds the plan that reaches the highest-scoring table, first with careful moves only,
+     * then (as a last chance) with every legal move.
      *
      * @param tableau      the table to start from
      * @param seesAllCards true only for an imagined board, whose face-down cards may be looked at
-     * @return the best plan, or an empty list if no plan makes the board better
+     * @return the moves to that table, or an empty list if no plan raises the score
      */
-    private List<Move> findBestPlan(Tableau tableau, boolean seesAllCards) {
+    private List<Move> findHighestScoringPlan(Tableau tableau, boolean seesAllCards) {
         List<Move> plan = search(tableau, true, seesAllCards);
         if (plan.isEmpty()) {
             plan = search(tableau, false, seesAllCards);
@@ -142,43 +143,44 @@ public class AutoPlayer implements Player {
     }
 
     private List<Move> search(Tableau start, boolean carefulMovesOnly, boolean seesAllCards) {
-        Step best = new Step(start, null, null);
-        int bestScore = evaluator.score(start);
+        Step startStep = new Step(start, null, null);
+        Step highestScoringStep = startStep;
+        int highestScore = evaluator.score(start);
 
         Queue<Step> stepsToExplore = new ArrayDeque<>();
         Set<String> boardsSeen = new HashSet<>();
-        stepsToExplore.add(best);
+        stepsToExplore.add(startStep);
         boardsSeen.add(start.toKey());
 
         while (!stepsToExplore.isEmpty() && boardsSeen.size() < BOARDS_PER_DECISION) {
-            Step current = stepsToExplore.poll();
-            for (Move move : chooseSensibleMoves(current.tableau(), carefulMovesOnly)) {
-                Tableau next = current.tableau().copy();
-                boolean cardTurned = next.apply(move);
-                if (!boardsSeen.add(next.toKey())) {
+            Step currentStep = stepsToExplore.poll();
+            for (Move move : chooseSensibleMoves(currentStep.tableau(), carefulMovesOnly)) {
+                Tableau nextTableau = currentStep.tableau().copy();
+                boolean cardTurned = nextTableau.apply(move);
+                if (!boardsSeen.add(nextTableau.toKey())) {
                     continue;                                       // already thought about this board
                 }
-                Step step = new Step(next, current, move);
-                if (next.isWon()) {
-                    return movesLeadingTo(step);
+                Step nextStep = new Step(nextTableau, currentStep, move);
+                if (nextTableau.isWon()) {
+                    return movesLeadingTo(nextStep);
                 }
-                int score = evaluator.score(next);
-                if (score > bestScore) {
-                    bestScore = score;
-                    best = step;
+                int nextScore = evaluator.score(nextTableau);
+                if (nextScore > highestScore) {
+                    highestScore = nextScore;
+                    highestScoringStep = nextStep;
                 }
                 if (!cardTurned || seesAllCards) {
-                    stepsToExplore.add(step);
+                    stepsToExplore.add(nextStep);
                 }
             }
         }
-        return movesLeadingTo(best);
+        return movesLeadingTo(highestScoringStep);
     }
 
     /** Walks back from the last step to the start and returns the moves in playing order. */
-    private List<Move> movesLeadingTo(Step last) {
+    private List<Move> movesLeadingTo(Step lastStep) {
         LinkedList<Move> moves = new LinkedList<>();
-        for (Step step = last; step.previous() != null; step = step.previous()) {
+        for (Step step = lastStep; step.previous() != null; step = step.previous()) {
             moves.addFirst(step.move());
         }
         return moves;
