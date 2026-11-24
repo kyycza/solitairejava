@@ -30,7 +30,7 @@ public record DrawMove(int times) implements Move {
         }
         String description = "Draw " + times + " times from the stock";
         if (times >= tableau.getTalon().countDrawsToTurnOver()) {
-            description += " (going through the whole talon and turning the waste over)";
+            description += " (turning the waste over on the way)";
         }
         return description;
     }
