@@ -11,7 +11,7 @@ public class BoardEvaluator {
 
     private static final int POINTS_PER_FOUNDATION_CARD = 12;
     private static final int PENALTY_PER_HIDDEN_CARD = 10;
-    private static final int PENALTY_PER_TALL_HIDDEN_STACK_UNIT = 20;
+    private static final int PENALTY_PER_DEEP_HIDDEN_STACK_UNIT = 20;
     private static final int POINTS_PER_EMPTY_STACK = 5;
 
     /**
@@ -37,6 +37,6 @@ public class BoardEvaluator {
             int hidden = stack.getHiddenCount();
             units += hidden * (hidden - 1) / 2;
         }
-        return units * PENALTY_PER_TALL_HIDDEN_STACK_UNIT;
+        return units * PENALTY_PER_DEEP_HIDDEN_STACK_UNIT;
     }
 }
