@@ -13,6 +13,7 @@ public final class MessagePrinter {
         System.out.println(AnsiColor.CYAN.paint("========================================="));
         System.out.println(AnsiColor.CYAN.paint("           KLONDIKE  SOLITAIRE"));
         System.out.println(AnsiColor.CYAN.paint("========================================="));
+        System.out.println();
     }
 
     /**
