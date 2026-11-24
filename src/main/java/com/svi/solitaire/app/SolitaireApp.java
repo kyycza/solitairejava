@@ -32,7 +32,7 @@ public class SolitaireApp {
                     return EXIT_OK;
                 }
                 if (choice == MenuChoice.PLAY_AGAIN_NEW_OPTIONS) {
-                    settings = menu.askSettings();
+                    settings = menu.askSettings(settings.startingDeck());
                 }
             }
         } catch (InputClosedException inputClosed) {

@@ -1,5 +1,6 @@
 package com.svi.solitaire.app;
 
+import com.svi.solitaire.enums.DeckFile;
 import com.svi.solitaire.enums.DrawMode;
 import com.svi.solitaire.enums.PlayMode;
 import com.svi.solitaire.enums.ShuffleType;
@@ -29,12 +30,31 @@ public class SettingsMenu {
         this.input = input;
     }
 
-    /** Asks all the questions, one after the other. */
+    /**
+     * The first time: asks for the deck file first, so a wrong file name is fixed before the other questions,
+     * then asks all the other options.
+     */
     public GameSettings askSettings() {
+        return askOptions(askStartingDeck());
+    }
+
+    /**
+     * Playing again with new options: lets the user keep the deck that is already loaded,
+     * so the file does not have to be typed and read again.
+     *
+     * @param currentDeck the deck of the last game, before shuffling
+     */
+    public GameSettings askSettings(Deck currentDeck) {
+        DeckFile deckChoice = input.askChoice("Which deck?", List.of(DeckFile.values()));
+        Deck startingDeck = deckChoice == DeckFile.SAME_DECK ? currentDeck : askStartingDeck();
+        return askOptions(startingDeck);
+    }
+
+    /** Asks every option except the deck, one after the other. */
+    private GameSettings askOptions(Deck startingDeck) {
         DrawMode drawMode = input.askChoice("Draw mode?", List.of(DrawMode.values()));
         PlayMode playMode = input.askChoice("What do you want to do?", List.of(PlayMode.values()));
         Shuffler shuffler = askShuffler(playMode);
-        Deck startingDeck = askStartingDeck();
         int gameCount = playMode == PlayMode.TEST_WIN_RATE ? askGameCount(shuffler) : 1;
         return new GameSettings(drawMode, shuffler, startingDeck, playMode, gameCount);
     }
