@@ -29,7 +29,7 @@ import java.util.Set;
  * <ol>
  *   <li><b>Look through the talon once.</b> At the start it draws through the whole stock, so it knows
  *       every talon card (any human may do the same).</li>
- *   <li><b>Think ahead.</b> It tries thousands of move sequences on COPIES of the board (breadth-first
+ *   <li><b>Think ahead.</b> It tries hundreds of move sequences on COPIES of the board (breadth-first
  *       search), scores every board it reaches, and plays the plan that leads to the highest-scoring one.
  *       A branch stops when a face-down card is turned, because nobody knows what will appear.</li>
  *   <li><b>Imagine the face-down cards (Draw 3 only).</b> It knows WHICH cards are face down (every card

@@ -2,11 +2,11 @@ package com.svi.solitaire.app;
 
 import com.svi.solitaire.enums.MenuChoice;
 import com.svi.solitaire.enums.PlayMode;
+import com.svi.solitaire.exception.InputClosedException;
 import com.svi.solitaire.io.InputHandler;
 import com.svi.solitaire.view.MessagePrinter;
 
 import java.util.List;
-import com.svi.solitaire.exception.InputClosedException;
 
 /** The whole program: ask for the options, play, then ask what to do next, until the user quits. */
 public class SolitaireApp {

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 /**
  * Asks the player questions in the console and keeps asking until the answer is valid.
- * If the input is closed (for example Ctrl+D), the NoSuchElementException is passed up to the caller.
+ * If the input is closed (for example Ctrl+D), an {@link InputClosedException} is thrown.
  */
 public class InputHandler implements AutoCloseable {
 
