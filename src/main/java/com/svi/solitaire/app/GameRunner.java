@@ -43,7 +43,7 @@ public final class GameRunner {
 
         Tableau tableau = Tableau.deal(shuffledDeck, settings.drawMode());
         BoardPrinter.print(tableau, 0, "Game start", List.of());
-        Player player = new AutoPlayer(shuffledDeck.hashCode());                 // in watchOneGame
+        Player player = new AutoPlayer(shuffledDeck.hashCode());
         int moveCount = playToEnd(tableau, player, BoardPrinter::print);
         MessagePrinter.printGameResult(tableau, moveCount);
     }

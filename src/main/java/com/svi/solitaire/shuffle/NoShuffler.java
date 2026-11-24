@@ -14,4 +14,10 @@ public class NoShuffler implements Shuffler {
     public String describe() {
         return "No shuffle";
     }
+
+    /** Without shuffling there is only one deck, so the win-rate test plays it once instead of many times. */
+    @Override
+    public int getCycleLength() {
+        return 1;
+    }
 }

@@ -9,7 +9,6 @@ import com.svi.solitaire.io.InputHandler;
 import com.svi.solitaire.io.FileLoader;
 import com.svi.solitaire.model.Deck;
 import com.svi.solitaire.shuffle.FaroShuffler;
-import com.svi.solitaire.shuffle.RandomShuffler;
 import com.svi.solitaire.shuffle.Shuffler;
 import com.svi.solitaire.view.MessagePrinter;
 
@@ -91,8 +90,9 @@ public class SettingsMenu {
     private int askGameCount(Shuffler shuffler) {
         int differentDecks = shuffler.getCycleLength();
         if (differentDecks > 0) {
-            MessagePrinter.printInfo("This shuffle can only make " + differentDecks
-                    + " different decks, so each one is played once.");
+            MessagePrinter.printInfo(differentDecks == 1
+                    ? "Without a shuffle, there is only one deck, so it is played once."
+                    : "This shuffle can only make " + differentDecks + " different decks, so each one is played once.");
             return differentDecks;
         }
         return input.askNumber("How many games", MIN_TEST_GAMES, MAX_TEST_GAMES);

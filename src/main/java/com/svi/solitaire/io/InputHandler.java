@@ -1,7 +1,10 @@
 package com.svi.solitaire.io;
 
+import com.svi.solitaire.exception.InputClosedException;
+
 import java.io.InputStream;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -27,7 +30,7 @@ public class InputHandler implements AutoCloseable {
     public int askNumber(String question, int min, int max) {
         while (true) {
             System.out.print(question + " (" + min + "-" + max + "): ");
-            String answer = scanner.nextLine().trim();
+            String answer = readLine();
             try {
                 int number = Integer.parseInt(answer);
                 if (number >= min && number <= max) {
@@ -64,7 +67,20 @@ public class InputHandler implements AutoCloseable {
      */
     public String askText(String question) {
         System.out.print(question + ": ");
-        return scanner.nextLine().trim();
+        return readLine();
+    }
+
+    /**
+     * Reads one line typed by the user, without spaces around it.
+     * Turns the Scanner's general "no more lines" error into our own exception, so that only a closed
+     * input means "goodbye", and a real bug somewhere else is never mistaken for it.
+     */
+    private String readLine() {
+        try {
+            return scanner.nextLine().trim();
+        } catch (NoSuchElementException noMoreLines) {
+            throw new InputClosedException();
+        }
     }
 
     @Override

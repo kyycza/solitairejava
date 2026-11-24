@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Loads a deck from any text file. The file name is never written in the code:
@@ -23,15 +24,16 @@ import java.util.StringTokenizer;
  * The name is looked for in two places, in this order:
  * <ol>
  *   <li>as a normal file path, so any file anywhere works ("C:/decks/my deck.txt");</li>
- *   <li>in the project's resources/decks folder, so a bundled deck needs only its name ("standard-deck.txt").</li>
+ *   <li>in the project's resources folder, so a bundled deck needs only its name ("sample-deck.txt").</li>
  * </ol>
  * Cards are written as codes such as D-A or S-10, separated by commas, spaces or new lines.
  */
 public final class FileLoader {
 
-    /** The folder inside src/main/resources that holds the bundled decks. */
+    /** Where the bundled decks are inside src/main/resources: "/" means directly in that folder. */
     private static final String BUNDLED_DECKS_FOLDER = "/";
     private static final String CARD_SEPARATORS = ", \t";
+    private static final String BYTE_ORDER_MARK = "\uFEFF";
 
     private FileLoader() {
     }
@@ -40,9 +42,9 @@ public final class FileLoader {
      * Loads a deck in two steps: first every card in the file is parsed,
      * then the parsed cards are checked as a whole deck.
      *
-     * @param fileName a file name or path, for example "standard-deck.txt" or "C:/decks/test.csv"
+     * @param fileName a file name or path, for example "input.txt" or "C:/decks/test.csv"
      * @return the deck, top card first
-     * @throws NoSuchFileException  if the file is neither at that path nor in resources/decks
+     * @throws NoSuchFileException  if the file is neither at that path nor in the resources folder
      * @throws IOException          if the file cannot be read
      * @throws InvalidCardException if the file contains text that is not a card
      * @throws InvalidDeckException if the cards are not exactly 52 different cards
@@ -62,7 +64,7 @@ public final class FileLoader {
         }
         InputStream bundledDeck = FileLoader.class.getResourceAsStream(BUNDLED_DECKS_FOLDER + fileName);
         if (bundledDeck != null) {
-            return new BufferedReader(new InputStreamReader(bundledDeck));
+            return new BufferedReader(new InputStreamReader(bundledDeck, StandardCharsets.UTF_8));
         }
         throw new NoSuchFileException(fileName);
     }
@@ -71,7 +73,12 @@ public final class FileLoader {
     private static List<Card> parseCards(BufferedReader reader) throws IOException {
         List<Card> cards = new ArrayList<>();
         String line;
+        boolean firstLine = true;
         while ((line = reader.readLine()) != null) {
+            if (firstLine && line.startsWith(BYTE_ORDER_MARK)) {
+                line = line.substring(BYTE_ORDER_MARK.length());   // not a card, so skip it
+            }
+            firstLine = false;
             StringTokenizer codes = new StringTokenizer(line, CARD_SEPARATORS);
             while (codes.hasMoreTokens()) {
                 cards.add(Card.fromCode(codes.nextToken()));

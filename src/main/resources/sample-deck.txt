@@ -1,4 +1,4 @@
-H-10 C-A S-9 D-4 C-K D-3 D-A H-8 H-K C-3 H-J D-6 S-2
-C-9 S-7 C-8 H-3 S-J H-5 D-2 H-6 C-10 S-10 S-Q C-4 C-2
-D-7 C-5 H-9 S-5 D-K S-4 C-J H-Q C-7 S-A S-K D-9 D-Q
-H-A S-8 C-6 S-3 H-4 D-8 S-6 D-10 D-J C-Q H-2 D-5 H-7
+H-10, C-A, S-9, D-4, C-K, D-3, D-A, H-8, H-K, C-3, H-J, D-6, S-2
+C-9, S-7, C-8, H-3, S-J, H-5, D-2, H-6, C-10, S-10, S-Q, C-4, C-2
+D-7, C-5, H-9, S-5, D-K, S-4, C-J, H-Q, C-7, S-A, S-K, D-9, D-Q
+H-A, S-8, C-6, S-3, H-4, D-8, S-6, D-10, D-J, C-Q, H-2, D-5, H-7

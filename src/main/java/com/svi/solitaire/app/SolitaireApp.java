@@ -6,7 +6,7 @@ import com.svi.solitaire.io.InputHandler;
 import com.svi.solitaire.view.MessagePrinter;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import com.svi.solitaire.exception.InputClosedException;
 
 /** The whole program: ask for the options, play, then ask what to do next, until the user quits. */
 public class SolitaireApp {
@@ -35,7 +35,7 @@ public class SolitaireApp {
                     settings = menu.askSettings();
                 }
             }
-        } catch (NoSuchElementException inputClosed) {
+        } catch (InputClosedException inputClosed) {
             MessagePrinter.printInfo("The input was closed. Goodbye!");
             return EXIT_OK;
         } catch (RuntimeException unexpected) {
@@ -52,8 +52,12 @@ public class SolitaireApp {
             } else {
                 GameRunner.testWinRate(settings);
             }
-        } catch (IllegalStateException | IllegalArgumentException problem) {
-            MessagePrinter.printError("This round stopped because of a problem: " + problem.getMessage());
+        } catch (IllegalStateException illegalMove) {
+            // thrown by the board (Tableau, Talon) when a move does not follow the rules
+            MessagePrinter.printError("This round stopped because of an illegal move: " + illegalMove.getMessage());
+        } catch (IllegalArgumentException wrongValue) {
+            // thrown when a wrong value is given, for example a faro shuffle count outside 1-52
+            MessagePrinter.printError("This round stopped because of a wrong value: " + wrongValue.getMessage());
         }
     }
 }

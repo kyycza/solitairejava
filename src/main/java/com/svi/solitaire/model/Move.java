@@ -14,7 +14,7 @@ public sealed interface Move permits CardMove, DrawMove {
     void applyTo(Tableau tableau);
 
     /**
-     * A short sentence about this move, such as "Stack 2 -> Stack 5: 9♥ 8♠".
+     * A short sentence about this move, such as "Stack 2 -> Stack 5: H-9 S-8"
      *
      * @param tableau the board BEFORE the move is played
      */

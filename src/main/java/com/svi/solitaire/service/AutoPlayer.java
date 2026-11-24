@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public class AutoPlayer implements Player {
 
-    private static final int BOARDS_PER_DECISION = 2000;
+    private static final int BOARDS_PER_DECISION = 300;
     private static final int IMAGINED_GAMES_PER_DECISION = 8;
 
     private final BoardEvaluator evaluator = new BoardEvaluator();
@@ -189,7 +189,9 @@ public class AutoPlayer implements Player {
     /** The legal moves, without the ones a good player would never try. */
     private List<Move> chooseSensibleMoves(Tableau tableau, boolean carefulMovesOnly) {
         List<Move> sensibleMoves = new ArrayList<>();
-        boolean emptyStackAlreadyTried = false;
+        // The piles whose King was already sent to an empty stack. All empty stacks are alike, so one
+        // empty stack per King is enough, but different Kings must each get their chance.
+        Set<Integer> pilesAlreadySentToEmptyStack = new HashSet<>();
         for (Move move : MoveFinder.findLegalMoves(tableau)) {
             if (!(move instanceof CardMove cardMove)) {
                 sensibleMoves.add(move);
@@ -201,10 +203,10 @@ public class AutoPlayer implements Player {
                 continue;                                           // cards stay on the foundation
             }
             if (to instanceof Manoeuvre && to.isEmpty()) {
-                if (emptyStackAlreadyTried || isKingAlreadyAtBottom(from, cardMove.cardCount())) {
-                    continue;                                       // all empty stacks are alike
+                if (isKingAlreadyAtBottom(from, cardMove.cardCount())
+                        || !pilesAlreadySentToEmptyStack.add(cardMove.fromPile())) {
+                    continue;                                       // pointless, or already tried
                 }
-                emptyStackAlreadyTried = true;
             }
             if (carefulMovesOnly && to instanceof Foundation
                     && !isSafeForFoundation(tableau, from.getTopCard()) && !turnsHiddenCard(from)) {

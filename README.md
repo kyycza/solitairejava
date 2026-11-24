@@ -1,4 +1,4 @@
-# Autoplay Klondike Solitaire
+# Klondike Solitaire
 
 The computer plays Klondike Solitaire by itself in the console.
 
@@ -10,8 +10,8 @@ Needs JDK 25 and Maven. Cards are shown the same way as in deck files: suit lett
 
 ## Options
 - Draw 1 or Draw 3
-- Random, out-faro or in-faro shuffle (1 to 52 faro shuffles)
+- Random, out-faro or in-faro shuffle (1 to 52 faro shuffles), no shuffle
 - Any deck file, with cards like `D-A` or `S-10` separated by commas, spaces or new lines (press Enter for the standard deck)
 - Watch one game move by move, or test the win rate over many games
 
-Sample decks are in `src/main/resources/decks`.
+Sample decks are in `src/main/resources`. Type just the name, for example `sample-deck.txt`.
