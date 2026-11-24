@@ -37,8 +37,8 @@ public final class Talon {
 
     /** Puts the cards left after dealing into the stock. The first card of the list is drawn first. */
     void load(List<Card> cardsInDrawOrder) {
-        for (int i = cardsInDrawOrder.size() - 1; i >= 0; i--) {
-            stock.putCard(cardsInDrawOrder.get(i));
+        for (int cardIndex = cardsInDrawOrder.size() - 1; cardIndex >= 0; cardIndex--) {
+            stock.putCard(cardsInDrawOrder.get(cardIndex));
         }
     }
 
@@ -55,7 +55,7 @@ public final class Talon {
             return;
         }
         int cardsToTurn = Math.min(drawMode.getCardsPerDraw(), stock.size());
-        for (int i = 0; i < cardsToTurn; i++) {
+        for (int cardsTurned = 0; cardsTurned < cardsToTurn; cardsTurned++) {
             waste.putCard(stock.takeTopCard());
         }
     }
@@ -77,7 +77,7 @@ public final class Talon {
         Talon preview = copy();
         int draws = countDrawsToTurnOver() + (countCards() + drawMode.getCardsPerDraw() - 1) / drawMode.getCardsPerDraw();
         List<Card> tops = new ArrayList<>();
-        for (int i = 0; i < draws && preview.canDraw(); i++) {
+        for (int drawsDone = 0; drawsDone < draws && preview.canDraw(); drawsDone++) {
             preview.draw();
             tops.add(preview.waste.getTopCard());
         }

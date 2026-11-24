@@ -81,7 +81,7 @@ public abstract class Pile {
     /** The card at a position, where 0 is the bottom card. */
     public Card getCard(int position) {
         Iterator<Card> fromBottom = cards.iterator();
-        for (int i = 0; i < position; i++) {
+        for (int cardsSkipped = 0; cardsSkipped < position; cardsSkipped++) {
             fromBottom.next();
         }
         return fromBottom.next();
@@ -93,7 +93,7 @@ public abstract class Pile {
      */
     public Card getRunStart(int runSize) {
         Iterator<Card> fromTop = cards.descendingIterator();
-        for (int i = 1; i < runSize; i++) {
+        for (int cardsSkipped = 1; cardsSkipped < runSize; cardsSkipped++) {
             fromTop.next();
         }
         return fromTop.next();
@@ -118,7 +118,7 @@ public abstract class Pile {
     /** Removes the top {@code count} cards and returns them, bottom card of the run first. */
     List<Card> takeCards(int count) {
         Deque<Card> run = new ArrayDeque<>();
-        for (int i = 0; i < count; i++) {
+        for (int cardsTaken = 0; cardsTaken < count; cardsTaken++) {
             run.addFirst(cards.removeLast());
         }
         afterCardsTaken();

@@ -48,8 +48,8 @@ public final class Deck {
         List<Card> cards = new ArrayList<>();
         for (Suit suit : Suit.values()) {
             cards.add(new Card(suit, Rank.ACE));
-            for (int i = ranks.length - 1; i > 0; i--) {             // King down to Two
-                cards.add(new Card(suit, ranks[i]));
+            for (int rankIndex = ranks.length - 1; rankIndex > 0; rankIndex--) {   // King down to Two
+                cards.add(new Card(suit, ranks[rankIndex]));
             }
         }
         return new Deck(cards);

@@ -37,7 +37,7 @@ public abstract class FaroShuffler implements Shuffler {
     @Override
     public Deck shuffle(Deck deck) {
         List<Card> cards = deck.getCards();
-        for (int i = 0; i < times; i++) {
+        for (int shufflesDone = 0; shufflesDone < times; shufflesDone++) {
             cards = mergeHalves(cards);
         }
         return new Deck(cards);
@@ -52,9 +52,9 @@ public abstract class FaroShuffler implements Shuffler {
         List<Card> secondHalf = bottomHalfGoesFirst() ? topHalf : bottomHalf;
 
         List<Card> merged = new ArrayList<>(cards.size());
-        for (int i = 0; i < half; i++) {
-            merged.add(firstHalf.get(i));
-            merged.add(secondHalf.get(i));
+        for (int pairIndex = 0; pairIndex < half; pairIndex++) {
+            merged.add(firstHalf.get(pairIndex));
+            merged.add(secondHalf.get(pairIndex));
         }
         return merged;
     }

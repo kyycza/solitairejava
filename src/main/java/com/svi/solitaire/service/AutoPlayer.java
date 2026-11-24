@@ -73,7 +73,7 @@ public class AutoPlayer implements Player {
     private List<Move> planByImagining(Tableau tableau) {
         Map<String, Integer> votes = new HashMap<>();
         Map<String, List<Move>> openingByTableKey = new HashMap<>();
-        for (int i = 0; i < IMAGINED_GAMES_PER_DECISION; i++) {
+        for (int imaginedGame = 0; imaginedGame < IMAGINED_GAMES_PER_DECISION; imaginedGame++) {
             Tableau imagined = tableau.imagineHiddenCards(random);
             List<Move> opening = playableOpening(tableau, findHighestScoringPlan(imagined, true));
             if (!opening.isEmpty()) {

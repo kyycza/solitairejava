@@ -53,8 +53,8 @@ public class InputHandler implements AutoCloseable {
      */
     public <T> T askChoice(String question, List<T> options) {
         System.out.println(question);
-        for (int i = 0; i < options.size(); i++) {
-            System.out.println("  " + (i + 1) + ") " + options.get(i));
+        for (int optionIndex = 0; optionIndex < options.size(); optionIndex++) {
+            System.out.println("  " + (optionIndex + 1) + ") " + options.get(optionIndex));
         }
         return options.get(askNumber("Your choice", 1, options.size()) - 1);
     }

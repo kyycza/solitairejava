@@ -18,7 +18,7 @@ public record DrawMove(int times) implements Move {
 
     @Override
     public void applyTo(Tableau tableau) {
-        for (int i = 0; i < times; i++) {
+        for (int drawsDone = 0; drawsDone < times; drawsDone++) {
             tableau.draw();
         }
     }

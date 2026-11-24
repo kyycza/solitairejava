@@ -24,9 +24,9 @@ public final class DeckPrinter {
         System.out.println(AnsiColor.YELLOW.paint(title));
         List<Card> cards = deck.getCards();
         StringBuilder row = new StringBuilder();
-        for (int i = 0; i < cards.size(); i++) {
-            row.append(cards.get(i).toCode()).append("  ");
-            if ((i + 1) % CARDS_PER_ROW == 0) {
+        for (int cardIndex = 0; cardIndex < cards.size(); cardIndex++) {
+            row.append(cards.get(cardIndex).toCode()).append("  ");
+            if ((cardIndex + 1) % CARDS_PER_ROW == 0) {
                 System.out.println(row);
                 row.setLength(0);
             }
