@@ -75,7 +75,7 @@ public class AutoPlayer implements Player {
         Map<String, List<Move>> openingByTableKey = new HashMap<>();
         for (int imaginedGame = 0; imaginedGame < IMAGINED_GAMES_PER_DECISION; imaginedGame++) {
             Tableau imagined = tableau.imagineHiddenCards(random);
-            List<Move> opening = playableOpening(tableau, findHighestScoringPlan(imagined, true));
+            List<Move> opening = findSafeOpeningMoves(tableau, findHighestScoringPlan(imagined, true));
             if (!opening.isEmpty()) {
                 String tableKeyAfterOpening = tableKeyAfter(tableau, opening);
                 votes.merge(tableKeyAfterOpening, 1, Integer::sum);
@@ -86,12 +86,18 @@ public class AutoPlayer implements Player {
     }
 
     /**
-     * The part of an imagined plan that is safe to play in the real game: every move up to and including
-     * the first one that turns a face-down card. After that the imagined game and the real one differ.
+     * Gets the moves from an imagined plan that are safe to execute
+     * on the real game board. It includes moves up to and including
+     * the first move that reveals a face-down card.
+     *
+     * @param realTableau the actual game board
+     * @param imaginedPlan the sequence of moves planned using an imagined board
+     * @return the opening moves that can safely be executed on the real board
      */
-    private List<Move> playableOpening(Tableau realTableau, List<Move> imaginedPlan) {
+    private List<Move> findSafeOpeningMoves(Tableau realTableau, List<Move> imaginedPlan) {
         Tableau trial = realTableau.copy();
         List<Move> opening = new ArrayList<>();
+
         for (Move move : imaginedPlan) {
             opening.add(move);
             if (trial.apply(move)) {
