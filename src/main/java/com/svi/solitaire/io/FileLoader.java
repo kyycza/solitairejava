@@ -1,5 +1,7 @@
 package com.svi.solitaire.io;
 
+import com.svi.solitaire.enums.Rank;
+import com.svi.solitaire.enums.Suit;
 import com.svi.solitaire.exception.InvalidCardException;
 import com.svi.solitaire.exception.InvalidDeckException;
 import com.svi.solitaire.model.Card;
@@ -33,6 +35,11 @@ public final class FileLoader {
     /** Where the bundled decks are inside src/main/resources: "/" means directly in that folder. */
     private static final String BUNDLED_DECKS_FOLDER = "/";
     private static final String CARD_SEPARATORS = ", \t";
+    /** Separates the suit from the rank in a card code such as "D-A". */
+    private static final String CODE_SEPARATOR = "-";
+    /** A code has exactly 3 parts: the suit, the dash, the rank. */
+    private static final int PARTS_IN_CODE = 3;
+    /** An invisible mark some editors (for example Windows Notepad) put at the very start of a file. */
     private static final String BYTE_ORDER_MARK = "\uFEFF";
 
     private FileLoader() {
@@ -81,9 +88,31 @@ public final class FileLoader {
             firstLine = false;
             StringTokenizer codes = new StringTokenizer(line, CARD_SEPARATORS);
             while (codes.hasMoreTokens()) {
-                cards.add(Card.fromCode(codes.nextToken()));
+                cards.add(parseCard(codes.nextToken()));
             }
         }
         return cards;
+    }
+
+    /**
+     * Reads a card code such as "D-A" (Ace of Diamonds) or "S-10" (Ten of Spades).
+     *
+     * @param code the card code: suit letter, a dash, then the rank label
+     * @return the card
+     * @throws InvalidCardException if the code is not a valid card
+     */
+    private static Card parseCard(String code) {
+        // "true" also returns the dashes as parts, so "D--A", "-D-A" and "D-" are refused instead of slipping through
+        StringTokenizer parts = new StringTokenizer(code, CODE_SEPARATOR, true);
+        if (parts.countTokens() != PARTS_IN_CODE) {
+            throw new InvalidCardException("\"" + code + "\" is not a card.");
+        }
+        String suitText = parts.nextToken();
+        String dash = parts.nextToken();
+        String rankText = parts.nextToken();
+        if (!dash.equals(CODE_SEPARATOR)) {
+            throw new InvalidCardException("\"" + code + "\" is not a card.");
+        }
+        return new Card(Suit.fromLetter(suitText), Rank.fromLabel(rankText));
     }
 }

@@ -26,7 +26,30 @@ public final class Manoeuvre extends Pile {
         if (isEmpty()) {
             return card.rank() == Rank.KING;
         }
-        return card.canBePlacedOn(getTopCard());
+        return canBePlacedOn(card, getTopCard());
+    }
+
+    /**
+     * Can {@code card} be put on top of {@code cardBelow} in this stack?
+     * Two rules must both be true:
+     * <ol>
+     *   <li>the colors are different (red on black, or black on red), and</li>
+     *   <li>the card is exactly one rank lower (for example a 9 on a 10).</li>
+     * </ol>
+     * Examples: H-9 on S-10 is allowed. H-9 on D-10 is not (both red). H-9 on S-J is not (J is two ranks higher).
+     */
+    private static boolean canBePlacedOn(Card card, Card cardBelow) {
+        return haveDifferentColors(card, cardBelow) && isOneRankLower(card, cardBelow);
+    }
+
+    /** True when one card is red and the other is black. Example: H-9 and S-10. */
+    private static boolean haveDifferentColors(Card card, Card otherCard) {
+        return card.isRed() != otherCard.isRed();
+    }
+
+    /** True when the card's rank is exactly one less than the other card's rank. Example: 9 and 10. */
+    private static boolean isOneRankLower(Card card, Card otherCard) {
+        return card.rank().getValue() + 1 == otherCard.rank().getValue();
     }
 
     /** All the face-up cards can be moved together as one run. */
